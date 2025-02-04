@@ -1,0 +1,76 @@
+local name="z-a-python"
+
+local tool="$1" action="$2" repo="$3"
+
+local -a cmd
+case "$tool" in
+  uv)
+    cmd=(uv tool)
+    case "$action" in
+      install)
+        cmd+=(install)
+        ;;
+      update|upgrade)
+        cmd+=(upgrade)
+        ;;
+      del*|uninstall)
+        cmd+=(delete)
+        ;;
+      *)
+        +zi-log "{e} Unknown action {file}${action}{rst}"
+        return 1
+        ;;
+    esac
+    ;;
+  pip)
+    cmd=(pip)
+    case "$action" in
+      install)
+        cmd+=(install --user)
+        ;;
+      update|upgrade)
+        cmd+=(install --user --upgrade)
+        ;;
+      del*|uninstall)
+        cmd+=(uninstall --user)
+        ;;
+      *)
+        +zi-log "{e} Unknown action {file}${action}{rst}"
+        return 1
+        ;;
+    esac
+    ;;
+  pipx)
+    cmd=(pipx)
+    case "$action" in
+      install)
+        cmd+=(install)
+        ;;
+      update|upgrade)
+        cmd+=(upgrade)
+        ;;
+      del*|uninstall)
+        cmd+=(uninstall)
+        ;;
+      *)
+        +zi-log "{e} Unknown action {file}${action}{rst}"
+        return 1
+        ;;
+    esac
+    ;;
+  *)
+    +zi-log "{e} Unknown tool {file}${tool}{rst}"
+    return 1
+    ;;
+esac
+
+if [[ -z "$repo" ]]
+then
+  +zi-log "{annex}${name}{rst} {e}Empty repo value"
+  return 1
+fi
+
++zi-log "{m} {b}{annex}${name}{rst}: $cmd {file}$repo{rst}"
+$=cmd $repo
+
+# vim: set ft=zsh et ts=2 sw=2 :
