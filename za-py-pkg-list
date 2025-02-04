@@ -6,10 +6,13 @@ case "$tool" in
   uv)
     # TODO Replace yq with jq once "uv tool list" supports json output:
     # https://github.com/astral-sh/uv/issues/10219
-    dir="${dir:A}" yq -er -p toml -o yaml '
-      .tool.requirements[]
-      | select(.directory == env(dir)).name
-    ' ${XDG_DATA_HOME:-${HOME}/.local/share}/uv/tools/*/uv-receipt.toml
+    local f
+    for f in ${XDG_DATA_HOME:-${HOME}/.local/share}/uv/tools/*/uv-receipt.toml
+    do
+      yq -p toml -o json "$f"
+    done | jq --arg dir "${dir:A}" '
+      .tool.requirements[] | select(.directory == $dir) | .name
+    '
     ;;
   pipx)
     pipx list --json --quiet | \
