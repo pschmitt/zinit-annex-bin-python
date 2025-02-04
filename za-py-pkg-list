@@ -10,7 +10,7 @@ case "$tool" in
     for f in ${XDG_DATA_HOME:-${HOME}/.local/share}/uv/tools/*/uv-receipt.toml
     do
       yq -p toml -o json "$f"
-    done | jq --arg dir "${dir:A}" '
+    done | jq -er --arg dir "${dir:A}" '
       .tool.requirements[] | select(.directory == $dir) | .name
     '
     ;;
