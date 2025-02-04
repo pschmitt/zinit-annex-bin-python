@@ -6,23 +6,23 @@
 0="${${ZERO:-${0:#$ZSH_ARGZERO}}:-${(%):-%N}}"
 0="${${(M)0:#/*}:-$PWD/$0}"
 
-autoload za-py-atclone-handler za-py-atpull-handler za-py-atdelete-handler
+autoload za-py-handler
 
 # An empty stub to fill the help handler fields
 :za-py-null-handler() { :; }
 
 @zinit-register-annex "z-a-python" \
   hook:atclone-50 \
-  za-py-atclone-handler \
+  za-py-handler \
   za-py-null-handler \
   "uv|uv''" # register new ices
 
 @zinit-register-annex "z-a-python" \
   hook:\%atpull-50 \
-  za-py-atpull-handler \
+  za-py-handler \
   za-py-null-handler
 
 @zinit-register-annex "z-a-python" \
   hook:atdelete-50 \
-  za-py-atdelete-handler \
+  za-py-handler \
   za-py-null-handler

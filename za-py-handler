@@ -11,26 +11,33 @@ else
 fi
 
 local name="z-a-python"
+local action
+case "$hook" in
+  *atclone*)
+    action=install
+    ;;
+  *atpull*)
+    action=update
+    ;;
+  *delet*)
+    action=delete
+    ;;
+  *)
+    +zi-log "{annex}${name}{rst} {e} unknown hook: {file}$hook{rst}"
+    return 2
+    ;;
+esac
 
 local i val
-local -a values
 for i in uv pip pipx
 do
   if (( ${+ICE[$i]} ))
   then
-    # builtin pushd -q "$dir" || return
-
-    values=(${(s.;.)ICE[$i]})
-
-    for val in $values
+    for val in "${ICE[$i]}"
     do
-      +zi-log "{annex}${name}{rst} {warn}za-py-magic $i install ${val:-dir}"
-      za-py-magic "$i" install "${val:-$dir}"
+      +zi-log "[$hook] {annex}${name}{rst} {warn}za-py-magic $i $action ${val:-dir}"
+      za-py-magic "$i" "$action" "${val:-$dir}"
     done
-
-    # popd -q
-  else
-    +zi-log "{annex}${name}{rst} {e}No ICE[$i] value"
   fi
 done
 
