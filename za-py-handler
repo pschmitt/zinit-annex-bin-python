@@ -10,7 +10,8 @@ else
   local type="$1" url="$2" id_as="$3" dir="${4#%}" hook="$5"
 fi
 
-local name="z-a-python"
+local name="za-py-handler"
+
 local action
 case "$hook" in
   *atclone*)

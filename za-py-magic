@@ -1,6 +1,5 @@
-local name="z-a-python"
-
 local tool="$1" action="$2" repo="$3"
+local name="za-py-magic"
 
 local -a cmd
 case "$tool" in
@@ -14,7 +13,7 @@ case "$tool" in
         cmd+=(upgrade)
         ;;
       del*|uninstall)
-        cmd+=(delete)
+        cmd+=(uninstall)
         ;;
       *)
         +zi-log "{e} Unknown action {file}${action}{rst}"
