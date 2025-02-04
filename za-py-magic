@@ -65,7 +65,7 @@ esac
 
 if [[ -z "$repo" ]]
 then
-  +zi-log "{annex}${name}{rst} {e}Empty repo value"
+  +zi-log "{annex}${name}{rst} {e} Empty repo value"
   return 1
 fi
 
