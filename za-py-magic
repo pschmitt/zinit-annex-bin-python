@@ -1,4 +1,6 @@
-local tool="$1" action="$2" repo="$3"
+autoload za-py-pkg-list
+
+local tool="$1" action="$2" dir="$3"
 local name="za-py-magic"
 
 local -a cmd
@@ -63,13 +65,22 @@ case "$tool" in
     ;;
 esac
 
-if [[ -z "$repo" ]]
+if [[ -z "$dir" ]]
 then
-  +zi-log "{annex}${name}{rst} {e} Empty repo value"
+  +zi-log "{annex}${name}{rst} {e} Empty dir value"
   return 1
 fi
 
-+zi-log "{m} {b}{annex}${name}{rst}: $cmd {file}$repo{rst}"
-$=cmd $repo
+case "$action" in
+  upd*|del*|uninst*)
+    local pkgs=("${(@f)$(za-py-pkg-list $cmd[1] $dir)}")
+    +zi-log "{m} {b}{annex}${name}{rst}: $cmd {file}${pkgs}{rst}"
+    $=cmd $pkgs
+    return $?
+    ;;
+esac
+
++zi-log "{m} {b}{annex}${name}{rst}: $cmd {file}${dir}{rst}"
+$=cmd $dir
 
 # vim: set ft=zsh et ts=2 sw=2 :

@@ -29,8 +29,6 @@ case "$hook" in
     ;;
 esac
 
-local id_as=${ICE[id-as]}
-
 local i val pypkg
 for i in uv pip pipx
 do
@@ -38,8 +36,7 @@ do
   then
     for val in "${ICE[$i]}"
     do
-      pypkg=${val:-${id_as:-${dir}}}
-      +zi-log "{annex}${name}{rst} za-py-magic $i $action $pypkg"
+      pypkg=${val:-${dir}}
       za-py-magic "$i" "$action" "$pypkg"
     done
   fi

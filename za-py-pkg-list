@@ -1,0 +1,28 @@
+local tool="$1" # pipx/uv
+local dir="$2"  # plugin path
+
+local pkgs
+case "$tool" in
+  uv)
+    # TODO Replace yq with jq once "uv tool list" supports json output:
+    # https://github.com/astral-sh/uv/issues/10219
+    dir="${dir:A}" yq -er -p toml -o yaml '
+      .tool.requirements[]
+      | select(.directory == env(dir)).name
+    ' ${XDG_DATA_HOME:-${HOME}/.local/share}/uv/tools/*/uv-receipt.toml
+    ;;
+  pipx)
+    pipx list --json --quiet | \
+      jq -er --arg dir "${dir:A}" '
+        .venvs | to_entries[]
+        | select(.value.metadata.main_package.package_or_url == $dir)
+        | .key
+      '
+    ;;
+  *)
+    +zi-log "{e} Unknown tool {file}${tool}{rst}"
+    return 1
+    ;;
+esac
+
+# vim: set ft=zsh et ts=2 sw=2 :
