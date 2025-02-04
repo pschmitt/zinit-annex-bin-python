@@ -1,15 +1,29 @@
 autoload za-py-pkg-list
 
-local tool="$1" action="$2" dir="$3"
+local tool="$1" action="$2" pypkg="$3"
 local name="za-py-magic"
 
-local -a cmd
+local -a cmd extras extra_args
+
+case "$pypkg" in
+  *\[*\]) # example: ralphbean/bugwarrior[jira]
+    local pypkg_og="$pypkg"
+    pypkg=${pypkg%%\[*}
+    extras+=(${${pypkg_og#*\[}%\]})
+    ;;
+esac
+
 case "$tool" in
   uv)
     cmd=(uv tool)
     case "$action" in
       install)
         cmd+=(install)
+        if [[ -n $extras ]]
+        then
+          pypkg=${pypkg:t}
+          cmd+=(--with "${pypkg}[${(j:,:)extras}]")
+        fi
         ;;
       update|upgrade)
         cmd+=(upgrade)
@@ -65,22 +79,29 @@ case "$tool" in
     ;;
 esac
 
-if [[ -z "$dir" ]]
+if [[ -z "$pypkg" ]]
 then
-  +zi-log "{annex}${name}{rst} {e} Empty dir value"
+  +zi-log "{annex}${name}{rst} {e} Empty pypkg value"
   return 1
 fi
 
 case "$action" in
   upd*|del*|uninst*)
-    local pkgs=("${(@f)$(za-py-pkg-list $cmd[1] $dir)}")
-    +zi-log "{m} {b}{annex}${name}{rst}: $cmd {file}${pkgs}{rst}"
-    $=cmd $pkgs
+    local pkgs=("${(@f)$(za-py-pkg-list $cmd[1] $pypkg)}")
+    [[ -z $pkgs ]] && pkgs=(${pypkg:t}) # fallback
+
+    local p
+    for p in $pkgs
+    do
+      +zi-log "{m} {b}{annex}${name}{rst}: $cmd {file}${p}{rst}"
+      $=cmd $p
+    done
+
     return $?
     ;;
 esac
 
-+zi-log "{m} {b}{annex}${name}{rst}: $cmd {file}${dir}{rst}"
-$=cmd $dir
++zi-log "{m} {b}{annex}${name}{rst}: $cmd {file}${pypkg}{rst}"
+$=cmd $pypkg
 
 # vim: set ft=zsh et ts=2 sw=2 :
