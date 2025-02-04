@@ -36,7 +36,7 @@ do
   then
     for val in "${ICE[$i]}"
     do
-      +zi-log "[$hook] {annex}${name}{rst} {warn}za-py-magic $i $action ${val:-dir}"
+      +zi-log "{annex}${name}{rst} za-py-magic $i $action ${val:-dir}"
       za-py-magic "$i" "$action" "${val:-$dir}"
     done
   fi
