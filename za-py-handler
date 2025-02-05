@@ -37,7 +37,7 @@ do
     for val in "${ICE[$i]}"
     do
       pypkg=${val:-${dir}}
-      za-py-magic "$i" "$action" "$pypkg"
+      za-py-magic "$i" "$action" "$pypkg" "$dir"
     done
   fi
 done

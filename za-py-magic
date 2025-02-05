@@ -1,9 +1,22 @@
 autoload za-py-pkg-list
 
-local tool="$1" action="$2" pypkg="$3"
+local tool="$1" action="$2" pypkg="$3" dir="$4"
 local name="za-py-magic"
 
-local -a cmd extras extra_args
+local -a cmd extras extra_deps
+# +zi-log "{e} DEBUG pypkg: $pypkg"
+if [[ $pypkg == *\+* ]] # pkg+other_pkg
+then
+  local ext=(${(s:+:)pypkg})
+  if [[ $pypkg == +* ]] # +other_pkg
+  then
+    pypkg="$dir"
+    extra_deps=("$ext[@]")
+  else
+    pypkg=$ext[1]
+    extra_deps=("${ext[@]:1}")
+  fi
+fi
 
 case "$pypkg" in
   *\[*\]) # example: ralphbean/bugwarrior[jira]
@@ -19,10 +32,20 @@ case "$tool" in
     case "$action" in
       install)
         cmd+=(install)
+
         if [[ -n $extras ]]
         then
           pypkg=${pypkg:t}
           cmd+=(--with "${pypkg}[${(j:,:)extras}]")
+        fi
+
+        if [[ -n $extra_deps ]]
+        then
+          local d
+          for d in $extra_deps
+          do
+            cmd+=(--with $d)
+          done
         fi
         ;;
       update|upgrade)
