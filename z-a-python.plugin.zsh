@@ -12,7 +12,7 @@ autoload za-py-handler
 :za-py-null-handler() { :; }
 
 @zinit-register-annex "z-a-python" \
-  hook:atclone-50 \
+  hook:\!atclone-50 \
   za-py-handler \
   za-py-null-handler \
   "uv|uv''|pip|pip''|pipx|pipx''" # register new ices
