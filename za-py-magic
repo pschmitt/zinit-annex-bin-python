@@ -27,40 +27,7 @@ case "$pypkg" in
 esac
 
 case "$tool" in
-  uv)
-    cmd=(uv tool)
-    case "$action" in
-      install)
-        cmd+=(install)
-
-        if [[ -n $extras ]]
-        then
-          pypkg=${pypkg:t}
-          cmd+=(--with "${pypkg}[${(j:,:)extras}]")
-        fi
-
-        if [[ -n $extra_deps ]]
-        then
-          local d
-          for d in $extra_deps
-          do
-            cmd+=(--with $d)
-          done
-        fi
-        ;;
-      update|upgrade)
-        cmd+=(upgrade)
-        ;;
-      del*|uninstall)
-        cmd+=(uninstall)
-        ;;
-      *)
-        +zi-log "{e} Unknown action {file}${action}{rst}"
-        return 1
-        ;;
-    esac
-    ;;
-  pip)
+  pip|pypip)
     cmd=(pip)
     case "$action" in
       install)
@@ -83,6 +50,39 @@ case "$tool" in
     case "$action" in
       install)
         cmd+=(install)
+        ;;
+      update|upgrade)
+        cmd+=(upgrade)
+        ;;
+      del*|uninstall)
+        cmd+=(uninstall)
+        ;;
+      *)
+        +zi-log "{e} Unknown action {file}${action}{rst}"
+        return 1
+        ;;
+    esac
+    ;;
+  uv)
+    cmd=(uv tool)
+    case "$action" in
+      install)
+        cmd+=(install)
+
+        if [[ -n $extras ]]
+        then
+          pypkg=${pypkg:t}
+          cmd+=(--with "${pypkg}[${(j:,:)extras}]")
+        fi
+
+        if [[ -n $extra_deps ]]
+        then
+          local d
+          for d in $extra_deps
+          do
+            cmd+=(--with $d)
+          done
+        fi
         ;;
       update|upgrade)
         cmd+=(upgrade)

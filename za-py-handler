@@ -30,7 +30,7 @@ case "$hook" in
 esac
 
 local i val pypkg
-for i in uv pip pipx
+for i in pipx pypip uv
 do
   if (( ${+ICE[$i]} ))
   then
