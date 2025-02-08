@@ -45,7 +45,7 @@ case "$tool" in
         ;;
     esac
     ;;
-  pipx)
+  *pipx*)
     cmd=(pipx)
     case "$action" in
       install)
