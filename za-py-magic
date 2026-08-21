@@ -67,7 +67,10 @@ case "$tool" in
     cmd=(uv tool)
     case "$action" in
       install)
-        cmd+=(install)
+        # --force: re-provisioning (eg. after wiping zinit's plugin dir) reruns
+        # this install against a shim uv already placed in ~/.local/bin on a
+        # previous run; without it uv refuses with "Executable already exists".
+        cmd+=(install --force)
 
         if [[ -n $extras ]]
         then
